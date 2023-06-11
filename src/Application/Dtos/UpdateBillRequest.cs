@@ -3,11 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Application.Dtos
 {
-    public record CreateBillRequest(
+    public record UpdateBillRequest(
         [Required]
         string Name,
-        decimal Amount, 
-        bool IsPaid,
+        decimal Amount,
         [Range(1, 12)]
         int Month,
         int Year,

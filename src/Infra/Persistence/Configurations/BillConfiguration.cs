@@ -10,9 +10,18 @@ namespace Infra.Persistence.Configurations
         {
             builder.HasKey(b => b.Id);
 
+            builder.Property(b => b.Name).IsRequired();
+
             builder.OwnsOne(b => b.Price, priceBuilder =>
             {
                 priceBuilder.Property(m => m.Currency).HasMaxLength(3);
+            });
+
+            builder.OwnsOne(b => b.Period, priceBuilder =>
+            {
+                priceBuilder.Property(m => m.Month).IsRequired();
+                priceBuilder.Property(m => m.Year).IsRequired();
+                priceBuilder.Property(m => m.MonthName).IsRequired();
             });
         }
     }

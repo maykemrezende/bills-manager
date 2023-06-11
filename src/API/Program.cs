@@ -1,3 +1,4 @@
+using Api;
 using Application;
 using Infra;
 using Serilog;

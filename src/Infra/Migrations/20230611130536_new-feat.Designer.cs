@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infra.Migrations
 {
     [DbContext(typeof(BillsContext))]
-    [Migration("20230610142311_Initial")]
-    partial class Initial
+    [Migration("20230611130536_new-feat")]
+    partial class newfeat
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,7 +37,7 @@ namespace Infra.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("CreationDate")
+                    b.Property<DateTime>("CreationDateUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsPaid")
@@ -74,6 +74,32 @@ namespace Infra.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("BillId");
                         });
+
+                    b.OwnsOne("Model.Bills.Period", "Period", b1 =>
+                        {
+                            b1.Property<int>("BillId")
+                                .HasColumnType("integer");
+
+                            b1.Property<int>("Month")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("MonthName")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<int>("Year")
+                                .HasColumnType("integer");
+
+                            b1.HasKey("BillId");
+
+                            b1.ToTable("Bills");
+
+                            b1.WithOwner()
+                                .HasForeignKey("BillId");
+                        });
+
+                    b.Navigation("Period")
+                        .IsRequired();
 
                     b.Navigation("Price")
                         .IsRequired();

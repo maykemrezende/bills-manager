@@ -33,10 +33,22 @@ namespace Infra.Persistence.Repositories
             return default;
         }
 
-        public async Task UpdateAsync(Bill bill)
+        public async Task<Bill> UpdateAsync(Bill bill)
         {
-            Context.Bills.Update(bill);
-            await Context.SaveChangesAsync();
+            try
+            {
+                var updatedBill = Context.Bills.Update(bill);
+                var saved = await Context.SaveChangesAsync() > 0;
+
+                if (saved)
+                    return updatedBill.Entity;
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e, e.Message);
+            }
+
+            return default;
         }
 
         public async Task<IReadOnlyList<Bill>> GetAllAsync()
@@ -46,13 +58,23 @@ namespace Infra.Persistence.Repositories
 
         public async Task<Bill?> GetByAsync(string code)
         {
-            return await Context.Bills.Where(b => b.Code.ToUpper() == code.ToUpper()).FirstOrDefaultAsync();
+            return await Context
+                .Bills
+                .AsNoTracking()
+                .Where(b => b.Code.ToUpper() == code.ToUpper())
+                .FirstOrDefaultAsync();
         }
 
         public async Task DeleteAsync(Bill bill)
         {
-            Context.Bills.Remove(bill);
-            await Context.SaveChangesAsync();
+            try
+            {
+                Context.Bills.Remove(bill);
+                await Context.SaveChangesAsync();
+            } catch (Exception e)
+            {
+                Logger.LogError(e, e.Message);
+            }
         }
     }
 }

@@ -72,6 +72,32 @@ namespace Infra.Migrations
                                 .HasForeignKey("BillId");
                         });
 
+                    b.OwnsOne("Model.Bills.Period", "Period", b1 =>
+                        {
+                            b1.Property<int>("BillId")
+                                .HasColumnType("integer");
+
+                            b1.Property<int>("Month")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("MonthName")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<int>("Year")
+                                .HasColumnType("integer");
+
+                            b1.HasKey("BillId");
+
+                            b1.ToTable("Bills");
+
+                            b1.WithOwner()
+                                .HasForeignKey("BillId");
+                        });
+
+                    b.Navigation("Period")
+                        .IsRequired();
+
                     b.Navigation("Price")
                         .IsRequired();
                 });

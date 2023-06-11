@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infra.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class newfeat : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -23,7 +23,10 @@ namespace Infra.Migrations
                     IsPaid = table.Column<bool>(type: "boolean", nullable: false),
                     Price_Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
                     Price_Amount = table.Column<decimal>(type: "numeric", nullable: false),
-                    CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Period_Month = table.Column<int>(type: "integer", nullable: false),
+                    Period_Year = table.Column<int>(type: "integer", nullable: false),
+                    Period_MonthName = table.Column<string>(type: "text", nullable: false),
+                    CreationDateUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
