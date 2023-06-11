@@ -1,15 +1,19 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.Bills;
+using Application.Services.Tags;
 using Model.Bills;
+using Model.Tags;
 
 namespace Application.Services.Bills
 {
     public class BillService : IBillService
     {
         public IBillRepository BillRepository { get; }
+        public ITagRepository TagRepository { get; }
 
-        public BillService(IBillRepository billRepository)
+        public BillService(IBillRepository billRepository, ITagRepository tagRepository)
         {
             BillRepository = billRepository;
+            TagRepository = tagRepository;
         }
 
         public async Task<CreatedBillResponse> CreateBillAsync(CreateBillRequest createBillDto)
@@ -107,9 +111,9 @@ namespace Application.Services.Bills
                 updateBillDto.Year, 
                 new Money(updateBillDto.Currency.ToString(), updateBillDto.Amount));
 
-            var paidBill = await BillRepository.UpdateAsync(bill);
+            var updatedBill = await BillRepository.UpdateAsync(bill);
 
-            if (paidBill is null)
+            if (updatedBill is null)
                 return default;
 
             return new UpdatedBillResponse(bill.Name,
@@ -119,6 +123,23 @@ namespace Application.Services.Bills
                 bill.Period.MonthName,
                 bill.Period.Year,
                 bill.IsPaid);
+        }
+
+        public async Task AssignTagAsync(AssignTagRequest dto, string code)
+        {
+            var bill = await BillRepository.GetByAsync(code);
+
+            if (bill is null)
+                return;
+
+            var tag = await TagRepository.GetByAsync(dto.TagCode);
+
+            if (tag is null)
+                return;
+
+            bill.AssignTag(tag);
+
+            await BillRepository.UpdateAsync(bill);
         }
     }
 }

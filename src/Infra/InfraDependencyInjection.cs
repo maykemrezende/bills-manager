@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Model.Bills;
+using Model.Tags;
 
 namespace Infra
 {
@@ -15,6 +16,7 @@ namespace Infra
                 options.UseNpgsql(configuration.GetConnectionString("BillsDatabase")));
 
             services.AddScoped<IBillRepository, BillRepository>();
+            services.AddScoped<ITagRepository, TagRepository>();
 
             return services;
         }

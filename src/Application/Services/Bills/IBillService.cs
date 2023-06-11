@@ -1,4 +1,4 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.Bills;
 
 namespace Application.Services.Bills
 {
@@ -10,5 +10,6 @@ namespace Application.Services.Bills
         Task<BillResponse> GetBillByCodeAsync(string code);
         Task<PaidBillResponse> PayBillAsync(string code);
         Task DeleteBillAsync(string code);
+        Task AssignTagAsync(AssignTagRequest dto, string code);
     }
 }

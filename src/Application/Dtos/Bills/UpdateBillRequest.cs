@@ -1,7 +1,7 @@
 ﻿using Common.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace Application.Dtos
+namespace Application.Dtos.Bills
 {
     public record UpdateBillRequest(
         [Required]

@@ -1,4 +1,4 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.Bills;
 using Application.Services.Bills;
 using Microsoft.AspNetCore.Mvc;
 
@@ -65,6 +65,19 @@ namespace Api.Controllers
                 return NotFound();
 
             return Ok(billToReturn);
+        }
+
+        [HttpPut("{code}/tag-assignment")]
+        public async Task<IActionResult> AssignTag([FromBody] AssignTagRequest dto, string code)
+        {
+            await BillService.AssignTagAsync(dto, code);
+
+            return Ok();
+
+            //if (billToReturn is null)
+            //    return NotFound();
+
+            //return Ok(billToReturn);
         }
     }
 }

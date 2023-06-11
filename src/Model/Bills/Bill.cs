@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using Model.Tags;
+using System.Globalization;
 
 namespace Model.Bills
 {
@@ -25,7 +26,9 @@ namespace Model.Bills
         public bool IsPaid { get; private set; }
         public Money Price { get; private set; }
         public Period Period { get; private set; }
-        public DateTime CreationDateUtc { get; set; }
+        public DateTime CreationDateUtc { get; private set; }
+
+        public List<Tag> Tags { get; }
 
         public void Pay()
         {
@@ -37,6 +40,16 @@ namespace Model.Bills
             Name = name; 
             Price = price;
             Period = GetPeriod(month, year);
+        }
+
+        public void AssignTag(Tag tag)
+        {
+            Tags.Add(tag);
+        }
+
+        public void AssignTags(List<Tag> tags)
+        {
+            Tags.AddRange(tags);
         }
 
         private static string GetCode()

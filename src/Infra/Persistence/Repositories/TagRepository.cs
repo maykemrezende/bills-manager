@@ -1,47 +1,31 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Model.Bills;
+using Model.Tags;
 
 namespace Infra.Persistence.Repositories
 {
-    public class BillRepository : IBillRepository
+    public class TagRepository : ITagRepository
     {
         public BillsContext Context { get; }
-        public ILogger<BillRepository> Logger { get; }
+        public ILogger<TagRepository> Logger { get; }
 
-        public BillRepository(BillsContext context,
-            ILogger<BillRepository> logger)
+        public TagRepository(BillsContext context,
+            ILogger<TagRepository> logger)
         {
             Context = context;
             Logger = logger;
         }
 
-        public async Task<Bill> AddAsync(Bill bill)
+        public async Task<Tag> AddAsync(Tag tag)
         {
             try
             {
-                var savedBill = await Context.Bills.AddAsync(bill);
+                var savedTag = await Context.Tags.AddAsync(tag);
                 var saved = await Context.SaveChangesAsync() > 0;
 
                 if (saved)
-                    return savedBill.Entity;
-            } catch (Exception e)
-            {
-                Logger.LogError(e, e.Message);
-            }
-
-            return default;
-        }
-
-        public async Task<Bill> UpdateAsync(Bill bill)
-        {
-            try
-            {
-                var updatedBill = Context.Bills.Update(bill);
-                var saved = await Context.SaveChangesAsync() > 0;
-
-                if (saved)
-                    return updatedBill.Entity;
+                    return savedTag.Entity;
             }
             catch (Exception e)
             {
@@ -51,35 +35,54 @@ namespace Infra.Persistence.Repositories
             return default;
         }
 
-        public async Task<IReadOnlyList<Bill>> GetAllAsync()
+        public async Task DeleteAsync(Tag tag)
+        {
+            try
+            {
+                Context.Tags.Remove(tag);
+                await Context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e, e.Message);
+            }
+        }
+
+        public async Task<IReadOnlyList<Tag>> GetAllAsync()
         {
             return await Context
-                .Bills
+                .Tags
                 .AsNoTracking()
-                .Include(b => b.Tags)
+                .Include(b => b.Bills)
                 .ToListAsync();
         }
 
-        public async Task<Bill?> GetByAsync(string code)
+        public async Task<Tag?> GetByAsync(string code)
         {
             return await Context
-                .Bills
+                .Tags
                 .AsNoTracking()
-                .Include(b => b.Tags)
+                .Include(b => b.Bills)
                 .Where(b => b.Code.ToUpper() == code.ToUpper())
                 .FirstOrDefaultAsync();
         }
 
-        public async Task DeleteAsync(Bill bill)
+        public async Task<Tag> UpdateAsync(Tag tag)
         {
             try
             {
-                Context.Bills.Remove(bill);
-                await Context.SaveChangesAsync();
-            } catch (Exception e)
+                var updatedTag = Context.Tags.Update(tag);
+                var saved = await Context.SaveChangesAsync() > 0;
+
+                if (saved)
+                    return updatedTag.Entity;
+            }
+            catch (Exception e)
             {
                 Logger.LogError(e, e.Message);
             }
+
+            return default;
         }
     }
 }
