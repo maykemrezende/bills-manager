@@ -27,9 +27,9 @@ namespace Api.Controllers
         }
 
         [HttpGet("{code}")]
-        public async Task<IActionResult> GetBillBy(string code)
+        public async Task<IActionResult> GetBillBy(string code, [FromQuery] bool includeTags)
         {
-            var billToReturn = await BillService.GetBillByCodeAsync(code);
+            var billToReturn = await BillService.GetBillByCodeAsync(code, includeTags);
 
             if (billToReturn is null)
                 return NotFound();

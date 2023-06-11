@@ -82,8 +82,9 @@ namespace Application.Services.Bills
                 b.IsPaid)).ToList();
         }
 
-        public async Task<BillResponse> GetBillByCodeAsync(string code)
+        public async Task<BillResponse> GetBillByCodeAsync(string code, bool includeTags)
         {
+            //add includeTags flag
             var bill = await BillRepository.GetByAsync(code);
 
             if (bill is null)
