@@ -27,9 +27,9 @@ namespace Api.Controllers
         }
 
         [HttpGet("{code}")]
-        public async Task<IActionResult> GetTagBy(string code)
+        public IActionResult GetTagBy(string code, [FromQuery] bool includeBills)
         {
-            var tagToReturn = await TagService.GetTagByCodeAsync(code);
+            var tagToReturn = TagService.GetTagByCode(code, includeBills);
 
             if (tagToReturn is null)
                 return NotFound();

@@ -37,7 +37,7 @@ namespace Application.Services.Tags
 
         public async Task<UpdatedTagResponse> UpdateTagAsync(UpdateTagRequest createTagDto, string code)
         {
-            var tag = await TagRepository.GetByAsync(code);
+            var tag = TagRepository.GetBy(code);
 
             if (tag is null)
                 return default;
@@ -63,9 +63,9 @@ namespace Application.Services.Tags
                 .ToList();
         }
 
-        public async Task<TagResponse> GetTagByCodeAsync(string code)
+        public TagResponse GetTagByCode(string code, bool includeBills = false)
         {
-            var tag = await TagRepository.GetByAsync(code);
+            var tag = TagRepository.GetBy(code, includeBills);
 
             if (tag is null)
                 return default;
@@ -77,7 +77,7 @@ namespace Application.Services.Tags
 
         public async Task DeleteTagAsync(string code)
         {
-            var tag = await TagRepository.GetByAsync(code);
+            var tag = TagRepository.GetBy(code);
 
             if (tag is null)
                 return;

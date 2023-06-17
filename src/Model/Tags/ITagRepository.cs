@@ -5,7 +5,7 @@
         Task<Tag> AddAsync(Tag tag);
         Task<Tag> UpdateAsync(Tag tag);
         Task<IReadOnlyList<Tag>> GetAllAsync();
-        Task<Tag?> GetByAsync(string code);
+        Tag? GetBy(string code, bool includeBills = false);
         Task DeleteAsync(Tag tag);
     }
 }

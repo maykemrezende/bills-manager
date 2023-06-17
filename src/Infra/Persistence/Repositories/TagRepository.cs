@@ -57,14 +57,18 @@ namespace Infra.Persistence.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Tag?> GetByAsync(string code)
+        public Tag? GetBy(string code, bool includeBills = false)
         {
-            return await Context
+            var queryableTag = Context
                 .Tags
                 .AsNoTracking()
                 .Include(b => b.Bills)
-                .Where(b => b.Code.ToUpper() == code.ToUpper())
-                .FirstOrDefaultAsync();
+                .Where(b => b.Code.ToUpper() == code.ToUpper());
+
+            if (includeBills)
+                queryableTag = queryableTag.Include(b => b.Bills);
+
+            return queryableTag.FirstOrDefault();
         }
 
         public async Task<Tag> UpdateAsync(Tag tag)

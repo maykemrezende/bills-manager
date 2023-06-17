@@ -7,7 +7,7 @@ namespace Application.Services.Bills
         Task<CreatedBillResponse> CreateBillAsync(CreateBillRequest createBillDto);
         Task<UpdatedBillResponse> UpdateBillAsync(UpdateBillRequest createBillDto, string code);
         Task<IReadOnlyList<BillResponse>> GetBillsAsync();
-        Task<BillResponse> GetBillByCodeAsync(string code, bool includeTags);
+        BillResponse GetBillByCode(string code, bool includeTags);
         Task<PaidBillResponse> PayBillAsync(string code);
         Task DeleteBillAsync(string code);
         Task AssignTagAsync(AssignTagRequest dto, string code);
