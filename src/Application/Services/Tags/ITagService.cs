@@ -7,7 +7,7 @@ namespace Application.Services.Tags
         Task<CreatedTagResponse> CreateTagAsync(CreateTagRequest createBillDto);
         Task<UpdatedTagResponse> UpdateTagAsync(UpdateTagRequest createBillDto, string code);
         Task<IReadOnlyList<TagResponse>> GetTagsAsync();
-        TagResponse GetTagByCode(string code, bool includeBills = false);
+        TagResponse GetTagByCode(string code);
         Task DeleteTagAsync(string code);
     }
 }
