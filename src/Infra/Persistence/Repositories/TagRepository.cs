@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Model.Bills;
 using Model.Tags;
 
 namespace Infra.Persistence.Repositories
@@ -48,27 +47,21 @@ namespace Infra.Persistence.Repositories
             }
         }
 
-        public async Task<IReadOnlyList<Tag>> GetAllAsync()
+        public IQueryable<Tag> GetAll()
         {
-            return await Context
+            return Context
                 .Tags
-                .AsNoTracking()
-                .Include(b => b.Bills)
-                .ToListAsync();
+                .AsNoTracking();
         }
 
-        public Tag? GetBy(string code, bool includeBills = false)
+        public Tag? GetBy(string code)
         {
-            var queryableTag = Context
+            return Context
                 .Tags
                 .AsNoTracking()
                 .Include(b => b.Bills)
-                .Where(b => b.Code.ToUpper() == code.ToUpper());
-
-            if (includeBills)
-                queryableTag = queryableTag.Include(b => b.Bills);
-
-            return queryableTag.FirstOrDefault();
+                .Where(b => b.Code.ToUpper() == code.ToUpper())
+                .FirstOrDefault();
         }
 
         public async Task<Tag> UpdateAsync(Tag tag)

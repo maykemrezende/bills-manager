@@ -51,13 +51,11 @@ namespace Infra.Persistence.Repositories
             return default;
         }
 
-        public async Task<IReadOnlyList<Bill>> GetAllAsync()
+        public IQueryable<Bill> GetAllAsync()
         {
-            return await Context
+            return Context
                 .Bills
-                .AsNoTracking()
-                .Include(b => b.Tags)
-                .ToListAsync();
+                .AsNoTracking();
         }
 
         public Bill? GetBy(string code, bool includeTags = false)

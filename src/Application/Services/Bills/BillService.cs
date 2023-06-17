@@ -1,7 +1,8 @@
 ﻿using Application.Dtos.Bills;
-using Application.Services.Tags;
+using Microsoft.EntityFrameworkCore;
 using Model.Bills;
 using Model.Tags;
+using System.Collections.Immutable;
 
 namespace Application.Services.Bills
 {
@@ -69,9 +70,22 @@ namespace Application.Services.Bills
             await BillRepository.DeleteAsync(bill);
         }
 
-        public async Task<IReadOnlyList<BillResponse>> GetBillsAsync()
+        public async Task<IReadOnlyList<BillResponse>> GetBillsAsync(GetBillsFiltersRequest filters)
         {
-            var bills =  await BillRepository.GetAllAsync();
+            var queryableBills = BillRepository.GetAllAsync();
+
+            if (queryableBills.Any() is false)
+            {
+                return new List<BillResponse>();
+            }
+
+            queryableBills = CheckIncludeTags(filters, queryableBills);
+            queryableBills = UseYearFilter(filters, queryableBills);
+            queryableBills = UseMonthFilter(filters, queryableBills);
+
+            var bills = queryableBills
+                .Where(q => q.IsPaid == filters.IsPaid)
+                .ToImmutableList();
 
             return bills.Select(b => new BillResponse(b.Name,
                 b.Code,
@@ -140,6 +154,36 @@ namespace Application.Services.Bills
             bill.AssignTag(tag);
 
             await BillRepository.UpdateAsync(bill);
+        }
+
+        private static IQueryable<Bill> UseMonthFilter(GetBillsFiltersRequest filters, IQueryable<Bill> queryableBills)
+        {
+            if (filters.MonthOfBills > 0)
+            {
+                queryableBills = queryableBills.Where(q => q.Period.Year == filters.YearOfBills);
+            }
+
+            return queryableBills;
+        }
+
+        private static IQueryable<Bill> UseYearFilter(GetBillsFiltersRequest filters, IQueryable<Bill> queryableBills)
+        {
+            if (filters.YearOfBills > 0)
+            {
+                queryableBills = queryableBills.Where(q => q.Period.Month == filters.MonthOfBills);
+            }
+
+            return queryableBills;
+        }
+
+        private static IQueryable<Bill> CheckIncludeTags(GetBillsFiltersRequest filters, IQueryable<Bill> queryableBills)
+        {
+            if (filters.IncludeTags)
+            {
+                queryableBills = queryableBills.Include(q => q.Tags);
+            }
+
+            return queryableBills;
         }
     }
 }

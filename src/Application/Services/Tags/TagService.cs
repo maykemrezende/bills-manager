@@ -1,6 +1,7 @@
 ﻿using Application.Dtos.Bills;
 using Application.Dtos.Tags;
 using Infra.Persistence.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Model.Bills;
 using Model.Tags;
 using System;
@@ -56,16 +57,19 @@ namespace Application.Services.Tags
 
         public async Task<IReadOnlyList<TagResponse>> GetTagsAsync()
         {
-            var tags = await TagRepository.GetAllAsync();
+            var tags = TagRepository.GetAll();
 
-            return tags
+            if (tags.Any() is false)
+                return new List<TagResponse>();
+
+            return await tags
                 .Select(b => new TagResponse(b.Name, b.Code))
-                .ToList();
+                .ToListAsync();
         }
 
-        public TagResponse GetTagByCode(string code, bool includeBills = false)
+        public TagResponse GetTagByCode(string code)
         {
-            var tag = TagRepository.GetBy(code, includeBills);
+            var tag = TagRepository.GetBy(code);
 
             if (tag is null)
                 return default;

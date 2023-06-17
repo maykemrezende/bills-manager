@@ -1,6 +1,8 @@
-﻿using Application.Dtos.Tags;
+﻿using Application.Dtos.Bills;
+using Application.Dtos.Tags;
 using Application.Services.Tags;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace Api.Controllers
 {
@@ -16,6 +18,7 @@ namespace Api.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(CreatedTagResponse), (int)HttpStatusCode.Created)]
         public async Task<IActionResult> CreateTag(CreateTagRequest request)
         {
             var tagToReturn = await TagService.CreateTagAsync(request);
@@ -27,9 +30,10 @@ namespace Api.Controllers
         }
 
         [HttpGet("{code}")]
-        public IActionResult GetTagBy(string code, [FromQuery] bool includeBills)
+        [ProducesResponseType(typeof(TagResponse), (int)HttpStatusCode.OK)]
+        public IActionResult GetTagBy(string code)
         {
-            var tagToReturn = TagService.GetTagByCode(code, includeBills);
+            var tagToReturn = TagService.GetTagByCode(code);
 
             if (tagToReturn is null)
                 return NotFound();
@@ -37,7 +41,20 @@ namespace Api.Controllers
             return Ok(tagToReturn);
         }
 
+        [HttpGet]
+        [ProducesResponseType(typeof(TagResponse), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetTags()
+        {
+            var tagToReturn = await TagService.GetTagsAsync();
+
+            if (tagToReturn.Any() is false)
+                return NotFound();
+
+            return Ok(tagToReturn);
+        }
+
         [HttpDelete("{code}")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> DeleteTag(string code)
         {
             await TagService.DeleteTagAsync(code);
@@ -46,6 +63,7 @@ namespace Api.Controllers
         }
 
         [HttpPut("{code}")]
+        [ProducesResponseType(typeof(UpdatedBillResponse), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> UpdateTag([FromBody] UpdateTagRequest dto, string code)
         {
             var tagToReturn = await TagService.UpdateTagAsync(dto, code);
