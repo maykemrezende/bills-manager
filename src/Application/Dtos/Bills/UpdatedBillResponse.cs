@@ -1,4 +1,4 @@
-﻿namespace Application.Dtos
+﻿namespace Application.Dtos.Bills
 {
     public record UpdatedBillResponse(
         string Name,

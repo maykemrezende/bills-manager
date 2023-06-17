@@ -53,16 +53,25 @@ namespace Infra.Persistence.Repositories
 
         public async Task<IReadOnlyList<Bill>> GetAllAsync()
         {
-            return await Context.Bills.ToListAsync();
-        }
-
-        public async Task<Bill?> GetByAsync(string code)
-        {
             return await Context
                 .Bills
                 .AsNoTracking()
-                .Where(b => b.Code.ToUpper() == code.ToUpper())
-                .FirstOrDefaultAsync();
+                .Include(b => b.Tags)
+                .ToListAsync();
+        }
+
+        public Bill? GetBy(string code, bool includeTags = false)
+        {
+            var queryableBill = Context
+                .Bills
+                .AsNoTracking()
+                .Include(b => b.Tags)
+                .Where(b => b.Code.ToUpper() == code.ToUpper());
+
+            if (includeTags)
+                queryableBill = queryableBill.Include(b => b.Tags);
+
+            return queryableBill.FirstOrDefault();
         }
 
         public async Task DeleteAsync(Bill bill)

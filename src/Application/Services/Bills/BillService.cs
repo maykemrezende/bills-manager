@@ -1,15 +1,19 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.Bills;
+using Application.Services.Tags;
 using Model.Bills;
+using Model.Tags;
 
 namespace Application.Services.Bills
 {
     public class BillService : IBillService
     {
         public IBillRepository BillRepository { get; }
+        public ITagRepository TagRepository { get; }
 
-        public BillService(IBillRepository billRepository)
+        public BillService(IBillRepository billRepository, ITagRepository tagRepository)
         {
             BillRepository = billRepository;
+            TagRepository = tagRepository;
         }
 
         public async Task<CreatedBillResponse> CreateBillAsync(CreateBillRequest createBillDto)
@@ -39,7 +43,7 @@ namespace Application.Services.Bills
 
         public async Task<PaidBillResponse> PayBillAsync(string code)
         {
-            var bill = await BillRepository.GetByAsync(code);
+            var bill = BillRepository.GetBy(code);
 
             if (bill is null)
                 return default;
@@ -57,7 +61,7 @@ namespace Application.Services.Bills
 
         public async Task DeleteBillAsync(string code)
         {
-            var bill = await BillRepository.GetByAsync(code);
+            var bill = BillRepository.GetBy(code);
 
             if (bill is null)
                 return;
@@ -78,9 +82,9 @@ namespace Application.Services.Bills
                 b.IsPaid)).ToList();
         }
 
-        public async Task<BillResponse> GetBillByCodeAsync(string code)
+        public BillResponse? GetBillByCode(string code, bool includeTags)
         {
-            var bill = await BillRepository.GetByAsync(code);
+            var bill = BillRepository.GetBy(code, includeTags);
 
             if (bill is null)
                 return default;
@@ -96,7 +100,7 @@ namespace Application.Services.Bills
 
         public async Task<UpdatedBillResponse> UpdateBillAsync(UpdateBillRequest updateBillDto, string code)
         {
-            var bill = await BillRepository.GetByAsync(code);
+            var bill = BillRepository.GetBy(code);
 
             if (bill is null)
                 return default;
@@ -107,9 +111,9 @@ namespace Application.Services.Bills
                 updateBillDto.Year, 
                 new Money(updateBillDto.Currency.ToString(), updateBillDto.Amount));
 
-            var paidBill = await BillRepository.UpdateAsync(bill);
+            var updatedBill = await BillRepository.UpdateAsync(bill);
 
-            if (paidBill is null)
+            if (updatedBill is null)
                 return default;
 
             return new UpdatedBillResponse(bill.Name,
@@ -119,6 +123,23 @@ namespace Application.Services.Bills
                 bill.Period.MonthName,
                 bill.Period.Year,
                 bill.IsPaid);
+        }
+
+        public async Task AssignTagAsync(AssignTagRequest dto, string code)
+        {
+            var bill = BillRepository.GetBy(code);
+
+            if (bill is null)
+                return;
+
+            var tag = TagRepository.GetBy(dto.TagCode);
+
+            if (tag is null)
+                return;
+
+            bill.AssignTag(tag);
+
+            await BillRepository.UpdateAsync(bill);
         }
     }
 }
