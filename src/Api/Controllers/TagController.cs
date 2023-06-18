@@ -42,7 +42,7 @@ namespace Api.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(TagResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<TagResponse>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetTags()
         {
             var tagToReturn = await TagService.GetTagsAsync();

@@ -1,41 +1,46 @@
-using Api;
 using Application;
 using Infra;
 using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Host.UseSerilog((context, configuration) =>
+public class Program 
 {
-    configuration.ReadFrom.Configuration(context.Configuration);
-});
+    public static void Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+        builder.Host.UseSerilog((context, configuration) =>
+        {
+            configuration.ReadFrom.Configuration(context.Configuration);
+        });
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        // Add services to the container.
 
-builder.Services
-    .AddEndpointsApiExplorer()
-    .AddSwaggerGen()
-    .AddApplication()
-    .AddInfra(builder.Configuration);
+        builder.Services.AddControllers();
+        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
-var app = builder.Build();
+        builder.Services
+            .AddEndpointsApiExplorer()
+            .AddSwaggerGen()
+            .AddApplication()
+            .AddInfra(builder.Configuration);
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+        var app = builder.Build();
+
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+
+        app.UseSerilogRequestLogging();
+
+        app.UseHttpsRedirection();
+
+        app.UseAuthorization();
+
+        app.MapControllers();
+
+        app.Run();
+    }
 }
-
-app.UseSerilogRequestLogging();
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();

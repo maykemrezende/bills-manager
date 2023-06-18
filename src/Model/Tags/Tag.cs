@@ -20,7 +20,7 @@ namespace Model.Tags
 
         public void Update(string name)
         {
-            Name = name;
+            Name = name.ToUpper();
         }
 
         private string GetCode()
