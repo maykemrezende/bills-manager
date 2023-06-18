@@ -51,8 +51,8 @@ namespace Application.Services.Tags
                 return default;
 
             return new UpdatedTagResponse(
-                tag.Name,
-                tag.Code);
+                updatedTag.Name,
+                updatedTag.Code);
         }
 
         public async Task<IReadOnlyList<TagResponse>> GetTagsAsync()
