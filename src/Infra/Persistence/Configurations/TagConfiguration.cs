@@ -12,6 +12,11 @@ namespace Infra.Persistence.Configurations
 
             builder.Property(b => b.Name).IsRequired();
             builder.Property(b => b.Code).IsRequired();
+
+            builder
+                .HasOne(t => t.User)
+                .WithMany(u => u.Tags)
+                .HasForeignKey(t => t.User.Id);
         }
     }
 }

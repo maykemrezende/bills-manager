@@ -28,6 +28,11 @@ namespace Infra.Persistence.Configurations
             });
 
             builder
+                .HasOne(b => b.User)
+                .WithMany(u => u.Bills)
+                .HasForeignKey(b => b.User.Id);
+
+            builder
                 .HasMany(e => e.Tags)
                 .WithMany(e => e.Bills)
                 .UsingEntity(

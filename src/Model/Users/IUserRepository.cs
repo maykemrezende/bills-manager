@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Model.Tenants
 {
-    internal class ITenantRepository
+    internal class IUserRepository
     {
     }
 }
