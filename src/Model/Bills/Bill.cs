@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace Model.Bills
 {
-    public class Bill
+    public class Bill : EntityAudited
     {
         public Bill()
         {

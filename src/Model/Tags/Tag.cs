@@ -2,7 +2,7 @@
 
 namespace Model.Tags
 {
-    public class Tag
+    public class Tag : EntityAudited
     {
         public int Id { get; private set; }
         public string Code { get; private set; }
