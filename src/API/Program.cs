@@ -1,5 +1,7 @@
 using Application;
 using Infra;
+using Microsoft.AspNetCore.Identity;
+using Model.Users;
 using Serilog;
 
 public class Program 
@@ -7,6 +9,11 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        builder.Services
+            .AddAuthentication(IdentityConstants.ApplicationScheme)
+            .AddIdentityCookies();
+        builder.Services.AddAuthorizationBuilder();
 
         builder.Host.UseSerilog((context, configuration) =>
         {
@@ -25,6 +32,8 @@ public class Program
             .AddInfra(builder.Configuration);
 
         var app = builder.Build();
+
+        app.MapIdentityApi<User>();
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
